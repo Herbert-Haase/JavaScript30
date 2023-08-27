@@ -57,9 +57,6 @@
 
     <script>
       const keys = document.querySelectorAll(".key");
-      const body = document.querySelector("body");
-      const audios = document.querySelectorAll("audio");
-      const audiosArray = [...audios];
 
       function toggleHighlightKeys(key, ...cssClasses) {
         for (let cssClass of cssClasses) {
@@ -67,21 +64,25 @@
         }
       }
 
-      body.addEventListener("keyup", (event) => {
+      function playAudio(e) {
+        let key = document.querySelector(`div[data-key="${e.keyCode}"]`);
+        let audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
+
+        if (!audio) return;
+
+        audio.currentTime = 0;
+        console.log(audio);
+        audio.play();
+      }
+
+      window.addEventListener("keyup", (event) => {
         keys.forEach((key) => {
           if (event.keyCode == key.getAttribute("data-key")) {
             // highlight keys for 0.1 sec
             toggleHighlightKeys(key, "sound", "playing");
             setTimeout(toggleHighlightKeys, 100, key, "sound", "playing");
 
-            // play audio
-            let audioToBePlayed = audiosArray.find((audio) => {
-              return audio.getAttribute("data-key") == event.keyCode;
-            });
-            let newAudioToBePlayed = new Audio(
-              audioToBePlayed.getAttribute("src")
-            );
-            newAudioToBePlayed.play();
+            playAudio(event);
           }
         });
       });
